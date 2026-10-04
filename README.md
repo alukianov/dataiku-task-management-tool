@@ -186,18 +186,19 @@ restrict local-file requests.
 [.github/workflows/](.github/workflows/):
 
 - **`linter.yml`** — `black --check` + `pylint`, runs on every pull request to any branch.
-- **`test-api.yml`** / **`test-ui.yml`** — reusable (`workflow_call`) suites, each also runnable
-  standalone via `workflow_dispatch`. `test-api.yml` sets `RESET_BEFORE_RUN=true` to wipe the shared
-  instance once before the run. Dispatch inputs support a pytest marker expression (intersected with
-  `api` or `ui`) and comma-separated Allure feature names. UI runs remain fixed to Chrome/Full HD.
+- **`test-api.yml`** / **`test-ui.yml`** — reusable (`workflow_call`) suites that only run tests and
+  upload Allure results. `test-api.yml` sets `RESET_BEFORE_RUN=true` to wipe the shared instance once
+  before the run. Inputs support a pytest marker expression (intersected with `api` or `ui`) and
+  comma-separated Allure feature names. UI runs remain fixed to Chrome/Full HD.
 - **`publish-allure-report.yml`** — reusable; merges uploaded `allure-results-*` artifacts, regenerates
   the Allure report (preserving history for trend graphs), and publishes it to the `gh-pages` branch.
-- **`regression.yml`** — orchestrator; runs nightly on a schedule and via manual `workflow_dispatch`,
-  chaining `test-api` → `test-ui` → `publish-allure-report` into one combined report.
+- **`regression.yml`** — the single entry point; runs nightly on a schedule and via manual
+  `workflow_dispatch`, chaining `test-api` → `test-ui` → `publish-allure-report`. A `suite` input
+  (`all`/`api`/`ui`) runs one or both suites; `publish_report` can turn off publishing for ad-hoc runs.
 
-Published reports live on the `gh-pages` branch: the full regression run under `regression/`, and
-standalone `test-api.yml`/`test-ui.yml` dispatches under their own `regression-api/`/`regression-ui/`
-paths so they never overwrite the combined report's history.
+Published reports live on the `gh-pages` branch: full runs (`suite=all`, including the nightly run)
+under `regression/`, and single-suite runs under `regression-api/`/`regression-ui/` so they never
+skew the full regression report's history.
 
 Secrets required in the repo: `QA_PASSWORD` (the `QA` test user's password; see
 [Environments and users](#environments-and-users)).
