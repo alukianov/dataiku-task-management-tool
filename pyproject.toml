@@ -1,0 +1,33 @@
+[project]
+name = "task-management-qa"
+version = "0.1.0"
+description = "API and UI test automation for the Dataiku QA take-home task management application"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --alluredir=reports/allure-results"
+markers = [
+    "api: API-level tests against the REST endpoints",
+    "ui: browser-driven tests against the single-page web app",
+    "smoke: minimal tests that validate the environment/framework wiring",
+    "regression: full regression suite",
+    "auth: authentication and authorization test cases",
+    "negative: invalid input / error-path test cases",
+    "boundary: boundary value analysis (e.g. title/tag length limits)",
+    "idempotency: repeat-request behavior checks (same request, same resulting state)",
+    "security: black-box security checks (IDOR, enumeration, injection, data exposure)",
+]
+
+[tool.black]
+line-length = 110
+target-version = ["py311"]
+
+[tool.pylint.main]
+py-version = "3.11"
+fail-under = 9
+
+[tool.pylint.format]
+max-line-length = 110

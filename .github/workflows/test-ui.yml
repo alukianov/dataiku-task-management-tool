@@ -1,0 +1,107 @@
+name: UI Tests
+
+on:
+    workflow_call:
+        inputs:
+            environment:
+                description: "Environment name from config.ini (blank = config.ini default)"
+                required: false
+                type: string
+            workers:
+                description: "pytest-xdist worker count"
+                required: false
+                type: string
+                default: "2"
+            marker:
+                description: "Optional pytest marker expression, e.g. smoke or auth and negative"
+                required: false
+                type: string
+            allure_features:
+                description: "Optional comma-separated Allure feature names"
+                required: false
+                type: string
+            publish_report:
+                description: "Publish an Allure report to gh-pages"
+                required: false
+                type: boolean
+                default: false
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: "Environment name from config.ini (blank = config.ini default)"
+                required: false
+                type: string
+            workers:
+                description: "pytest-xdist worker count"
+                required: false
+                type: string
+                default: "2"
+            marker:
+                description: "Optional pytest marker expression, e.g. smoke or auth and negative"
+                required: false
+                type: string
+            allure_features:
+                description: "Optional comma-separated Allure feature names"
+                required: false
+                type: string
+            publish_report:
+                description: "Publish an Allure report to gh-pages"
+                required: false
+                type: boolean
+                default: true
+
+permissions:
+    contents: write
+
+jobs:
+    ui-tests:
+        runs-on: ubuntu-latest
+        env:
+            ENVIRONMENT_ARG: ${{ inputs.environment }}
+            WORKERS: ${{ inputs.workers }}
+            MARKER_FILTER: ${{ inputs.marker }}
+            ALLURE_FEATURES: ${{ inputs.allure_features }}
+            QA_PASSWORD: ${{ secrets.QA_PASSWORD }}
+            HEADLESS: "true"
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Set up Chrome
+              uses: browser-actions/setup-chrome@v1
+
+            - name: Run UI tests (Chrome, Full HD)
+              run: |
+                  if [ -n "$MARKER_FILTER" ]; then
+                      PYTEST_MARKER="ui and ($MARKER_FILTER)"
+                  else
+                      PYTEST_MARKER="ui"
+                  fi
+                  ARGS=(-n "$WORKERS" -m "$PYTEST_MARKER" --browser=chrome --resolution=fullhd)
+                  [ -n "$ENVIRONMENT_ARG" ] && ARGS+=(--environment "$ENVIRONMENT_ARG")
+                  [ -n "$ALLURE_FEATURES" ] && ARGS+=(--allure-features "$ALLURE_FEATURES")
+                  pytest "${ARGS[@]}"
+
+            - name: Upload Allure results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: allure-results-ui
+                  path: reports/allure-results
+
+    # Only when this workflow is run standalone - regression.yml publishes the combined report itself.
+    publish-report:
+        needs: ui-tests
+        if: always() && inputs.publish_report
+        uses: ./.github/workflows/publish-allure-report.yml
+        with:
+            report_dir: regression-ui
+        secrets: inherit

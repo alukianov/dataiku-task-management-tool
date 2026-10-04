@@ -1,0 +1,112 @@
+name: Specification Clarification
+description: Raise an ambiguity, gap, or inconsistency found in the specification (static testing)
+title: "[Spec]: "
+labels: ["specification", "static-testing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sections follow the Gap / Ambiguity / Assumption structure in
+        docs/known-defects-and-improvements.md ("Finding structure"). Write `None`/`Unknown`
+        rather than leaving a section out.
+  - type: input
+    id: finding-id
+    attributes:
+      label: Finding ID
+      description: TM-xx ID from docs/known-defects-and-improvements.md, if already logged there
+      placeholder: "TM-19"
+  - type: input
+    id: location
+    attributes:
+      label: Spec reference
+      placeholder: "specification/task-management-app.md - Authentication"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: "See the Area column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - API
+        - UI
+        - Design
+        - Process
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: "Likelihood x Impact - see docs/test-strategy.md"
+      options:
+        - "P0 - security/data-corruption risk"
+        - "P1 - functional correctness"
+        - "P2 - inconsistent contract / minor UI"
+        - "P3 - cosmetic / no real impact"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: "See the Category column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - Ambiguity
+        - Gap
+        - Assumption to verify
+    validations:
+      required: true
+  - type: dropdown
+    id: testing-type
+    attributes:
+      label: Testing type
+      description: "How this was found/verified - see the Testing type column in docs/known-defects-and-improvements.md"
+      options:
+        - Static review
+        - Exploratory
+        - Manual
+        - API testing
+        - UI testing
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: Open question
+      description: What the specification does not state or states ambiguously
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What the live instance actually does, or "None" if not yet observed
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What can't be asserted with confidence until this is resolved?
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Suggested resolution
+      description: Clarification to request, or working assumption until confirmed
+    validations:
+      required: true
+  - type: textarea
+    id: test-coverage
+    attributes:
+      label: Test coverage
+      description: Automated test(s) documenting the observed behavior, or "None"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Related findings, priority rationale, follow-up observations
