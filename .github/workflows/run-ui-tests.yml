@@ -1,8 +1,6 @@
-name: Regression
+name: UI Tests
 
 on:
-    schedule:
-        - cron: "0 2 * * *"
     workflow_dispatch:
         inputs:
             environment:
@@ -15,47 +13,36 @@ on:
                 type: string
                 default: "2"
             marker:
-                description: "Optional pytest marker expression, e.g. security or auth and negative"
+                description: "Optional pytest marker expression, e.g. smoke or auth and negative"
                 required: false
                 type: string
             allure_features:
                 description: "Optional comma-separated Allure feature names"
                 required: false
                 type: string
+            publish_report:
+                description: "Publish an Allure report to gh-pages"
+                required: false
+                type: boolean
+                default: true
 
 permissions:
     contents: write
 
-concurrency:
-    group: regression
-    cancel-in-progress: false
-
 jobs:
-    api-tests:
-        uses: ./.github/workflows/test-api.yml
-        with:
-            environment: ${{ inputs.environment }}
-            workers: ${{ inputs.workers || '2' }}
-            marker: ${{ inputs.marker }}
-            allure_features: ${{ inputs.allure_features }}
-        secrets: inherit
-
-    # Runs after api-tests so the RESET_BEFORE_RUN wipe (test-api.yml) happens exactly once, before
-    # either suite touches the shared instance.
     ui-tests:
-        needs: api-tests
         uses: ./.github/workflows/test-ui.yml
         with:
             environment: ${{ inputs.environment }}
-            workers: ${{ inputs.workers || '2' }}
+            workers: ${{ inputs.workers }}
             marker: ${{ inputs.marker }}
             allure_features: ${{ inputs.allure_features }}
         secrets: inherit
 
     publish-report:
-        needs: [api-tests, ui-tests]
-        if: always()
+        needs: ui-tests
+        if: always() && inputs.publish_report
         uses: ./.github/workflows/publish-allure-report.yml
         with:
-            report_dir: regression
+            report_dir: regression-ui
         secrets: inherit
