@@ -1,0 +1,1 @@
+[{"values":["test"],"name":"ENVIRONMENT"},{"values":["https://luk-ole.rnd1.candidates.ondku.net"],"name":"BASE_URL"},{"values":["QA"],"name":"TEST_USER"},{"values":["chrome"],"name":"BROWSERS"},{"values":["fullhd"],"name":"RESOLUTIONS"},{"values":["True"],"name":"HEADLESS"}]
