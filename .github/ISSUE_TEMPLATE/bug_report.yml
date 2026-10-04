@@ -1,0 +1,157 @@
+name: Bug Report
+description: Report a defect found in the task management API or web app
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug! Sections follow the Bug / Security structure in
+        docs/known-defects-and-improvements.md ("Finding structure"). Write `None`/`Unknown`
+        rather than leaving a section out. Design issues and improvements use the Design Issue template.
+  - type: input
+    id: finding-id
+    attributes:
+      label: Finding ID
+      description: TM-xx ID from docs/known-defects-and-improvements.md, if already logged there
+      placeholder: "TM-12"
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Instance URL and any relevant environment detail
+      placeholder: "https://luk-ole.rnd1.candidates.ondku.net/"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: "See the Area column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - API
+        - UI
+        - Design
+        - Process
+    validations:
+      required: true
+  - type: input
+    id: endpoint-page
+    attributes:
+      label: Endpoint / Page affected
+      placeholder: "PATCH /<task_id>  or  web/index.html task edit form"
+    validations:
+      required: true
+  - type: input
+    id: spec-ref
+    attributes:
+      label: Spec reference
+      description: Specification section, or "N/A - frontend-only"
+      placeholder: "specification/task-management-app.md - RESTful API - /tags"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: One or two sentences on what is wrong
+    validations:
+      required: true
+  - type: textarea
+    id: preconditions
+    attributes:
+      label: Preconditions
+      description: Test data / authentication state required to reproduce
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Result
+    validations:
+      required: true
+  - type: textarea
+    id: root-cause
+    attributes:
+      label: Root cause
+      description: Code/behavior explanation if known, otherwise "Unknown"
+    validations:
+      required: true
+  - type: textarea
+    id: test-coverage
+    attributes:
+      label: Test coverage
+      description: Automated test(s) covering this (note any xfail marker), or "None"
+    validations:
+      required: true
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested fix
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Evidence (payloads, logs, screenshots, Allure links), related findings, priority rationale
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical
+        - Major
+        - Minor
+        - Cosmetic
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: "Likelihood x Impact - see docs/test-strategy.md"
+      options:
+        - "P0 - security/data-corruption risk"
+        - "P1 - functional correctness"
+        - "P2 - inconsistent contract / minor UI"
+        - "P3 - cosmetic / no real impact"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: "See the Category column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - Bug
+        - Security
+    validations:
+      required: true
+  - type: dropdown
+    id: testing-type
+    attributes:
+      label: Testing type
+      description: "How this was found/verified - see the Testing type column in docs/known-defects-and-improvements.md"
+      options:
+        - Static review
+        - Exploratory
+        - Manual
+        - API testing
+        - UI testing
+    validations:
+      required: true
