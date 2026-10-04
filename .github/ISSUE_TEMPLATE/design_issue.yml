@@ -1,0 +1,103 @@
+name: Design Issue / Improvement
+description: Propose a UX, API-design, or engineering improvement where the app works but the design is inconsistent or doesn't scale
+title: "[Design]: "
+labels: ["design", "enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sections follow the Design Issue / Improvement structure in
+        docs/known-defects-and-improvements.md ("Finding structure"). Write `None`/`Unknown`
+        rather than leaving a section out. Functional defects use the Bug Report template.
+  - type: input
+    id: finding-id
+    attributes:
+      label: Finding ID
+      description: TM-xx ID from docs/known-defects-and-improvements.md, if already logged there
+      placeholder: "TM-37"
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: "See the Area column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - API
+        - UI
+        - Design
+        - Process
+    validations:
+      required: true
+  - type: input
+    id: spec-ref
+    attributes:
+      label: Spec reference
+      description: Specification section, or "N/A - frontend-only"
+      placeholder: "N/A - frontend-only"
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+    validations:
+      required: true
+  - type: textarea
+    id: problem-impact
+    attributes:
+      label: Problem / impact
+      description: Why the current design is a problem for users, consistency, scalability, or testability
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Proposed improvement
+    validations:
+      required: true
+  - type: textarea
+    id: test-coverage
+    attributes:
+      label: Test coverage
+      description: Automated test(s) covering this, or "None"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Evidence (screenshots, DOM snippets), related findings, priority rationale
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: "Likelihood x Impact - see docs/test-strategy.md"
+      options:
+        - "P0 - security/data-corruption risk"
+        - "P1 - functional correctness"
+        - "P2 - inconsistent contract / minor UI"
+        - "P3 - cosmetic / no real impact"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: "See the Category column of the Summary in docs/known-defects-and-improvements.md"
+      options:
+        - Design Issue
+        - Improvement
+    validations:
+      required: true
+  - type: dropdown
+    id: testing-type
+    attributes:
+      label: Testing type
+      description: "How this was found/verified - see the Testing type column in docs/known-defects-and-improvements.md"
+      options:
+        - Static review
+        - Exploratory
+        - Manual
+        - API testing
+        - UI testing
+    validations:
+      required: true

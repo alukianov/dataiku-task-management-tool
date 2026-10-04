@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Specification
+    url: https://github.com/CHANGE_ME/test-tasks-1/blob/main/specification/task-management-app.md
+    about: Re-read the assignment specification before filing an issue.

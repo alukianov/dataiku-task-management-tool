@@ -1,0 +1,78 @@
+name: Publish Allure Report
+
+on:
+    workflow_call:
+        inputs:
+            report_dir:
+                description: "gh-pages subfolder to publish the report to"
+                required: false
+                type: string
+                default: "regression"
+
+permissions:
+    contents: write
+
+jobs:
+    publish-report:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download Allure results
+              uses: actions/download-artifact@v4
+              with:
+                  pattern: allure-results-*
+                  path: allure-results
+                  merge-multiple: true
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Install Allure CLI
+              run: npm install -g allure-commandline
+
+            - name: Prepare gh-pages workspace
+              run: |
+                  git clone --depth=1 --branch gh-pages \
+                      https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
+                      gh-pages-repo || {
+                      echo "gh-pages branch not found, creating it"
+                      mkdir gh-pages-repo
+                      cd gh-pages-repo
+                      git init -b gh-pages
+                      git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+                  }
+
+            - name: Generate report with preserved history
+              env:
+                  REPORT_DIR: ${{ inputs.report_dir }}
+              run: |
+                  mkdir -p gh-pages-repo/$REPORT_DIR
+
+                  # Preserve the previous run's history so Allure can render trend graphs.
+                  if [ -d gh-pages-repo/$REPORT_DIR/allure-report/history ]; then
+                      mkdir -p allure-results/history
+                      cp -r gh-pages-repo/$REPORT_DIR/allure-report/history/* allure-results/history/
+                  fi
+
+                  rm -rf gh-pages-repo/$REPORT_DIR/allure-report
+                  allure generate allure-results -o gh-pages-repo/$REPORT_DIR/allure-report --clean
+
+            - name: Commit and push report
+              env:
+                  REPORT_DIR: ${{ inputs.report_dir }}
+              run: |
+                  cd gh-pages-repo
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add $REPORT_DIR
+                  git commit -m "Update $REPORT_DIR Allure report - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
+                  git pull --rebase origin gh-pages || echo "No remote changes to pull"
+                  git push origin gh-pages
+
+            - name: Upload Allure report artifact
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: allure-report-${{ inputs.report_dir }}
+                  path: gh-pages-repo/${{ inputs.report_dir }}/allure-report
+                  retention-days: 10
