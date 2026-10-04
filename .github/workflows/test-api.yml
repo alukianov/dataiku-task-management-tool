@@ -1,4 +1,4 @@
-name: API Tests
+name: API Test Suite
 
 on:
     workflow_call:
@@ -20,42 +20,13 @@ on:
                 description: "Optional comma-separated Allure feature names"
                 required: false
                 type: string
-            publish_report:
-                description: "Publish an Allure report to gh-pages"
-                required: false
-                type: boolean
-                default: false
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: "Environment name from config.ini (blank = config.ini default)"
-                required: false
-                type: string
-            workers:
-                description: "pytest-xdist worker count"
-                required: false
-                type: string
-                default: "2"
-            marker:
-                description: "Optional pytest marker expression, e.g. security or auth and negative"
-                required: false
-                type: string
-            allure_features:
-                description: "Optional comma-separated Allure feature names"
-                required: false
-                type: string
-            publish_report:
-                description: "Publish an Allure report to gh-pages"
-                required: false
-                type: boolean
-                default: true
 
 permissions:
     contents: write
 
 jobs:
     api-tests:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         env:
             RESET_BEFORE_RUN: "true"
             ENVIRONMENT_ARG: ${{ inputs.environment }}
@@ -64,9 +35,9 @@ jobs:
             ALLURE_FEATURES: ${{ inputs.allure_features }}
             QA_PASSWORD: ${{ secrets.QA_PASSWORD }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
 
-            - uses: actions/setup-python@v5
+            - uses: actions/setup-python@v7
               with:
                   python-version: "3.11"
 
@@ -89,16 +60,7 @@ jobs:
 
             - name: Upload Allure results
               if: always()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: allure-results-api
                   path: reports/allure-results
-
-    # Only when this workflow is run standalone - regression.yml publishes the combined report itself.
-    publish-report:
-        needs: api-tests
-        if: always() && inputs.publish_report
-        uses: ./.github/workflows/publish-allure-report.yml
-        with:
-            report_dir: regression-api
-        secrets: inherit
