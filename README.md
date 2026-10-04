@@ -17,6 +17,14 @@ This repository covers:
 See [docs/test-strategy.md](docs/test-strategy.md) / [docs/test-plan.md](docs/test-plan.md) for what
 is tested, where, and how.
 
+## AI assistance
+
+Generative AI was used through GitHub Copilot to support exploratory testing, develop repository
+conventions and speed up routine work such as traceability and script
+execution. Models varied by task, including Claude Sonnet 5.0 for reasoning and analysis and GPT mini
+for routine actions. AI suggestions were reviewed and adapted; relevant behavior was verified through
+tests or direct observation, and reusable conventions were captured in skills and instructions.
+
 ## Repository structure
 
 ```
