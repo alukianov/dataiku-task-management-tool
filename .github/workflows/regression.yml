@@ -5,6 +5,15 @@ on:
         - cron: "0 2 * * *"
     workflow_dispatch:
         inputs:
+            suite:
+                description: "Which suites to run"
+                required: false
+                type: choice
+                options:
+                    - all
+                    - api
+                    - ui
+                default: all
             environment:
                 description: "Environment name from config.ini (blank = config.ini default)"
                 required: false
@@ -22,6 +31,11 @@ on:
                 description: "Optional comma-separated Allure feature names"
                 required: false
                 type: string
+            publish_report:
+                description: "Publish the Allure report to gh-pages"
+                required: false
+                type: boolean
+                default: true
 
 permissions:
     contents: write
@@ -32,6 +46,7 @@ concurrency:
 
 jobs:
     api-tests:
+        if: inputs.suite != 'ui'
         uses: ./.github/workflows/test-api.yml
         with:
             environment: ${{ inputs.environment }}
@@ -41,9 +56,10 @@ jobs:
         secrets: inherit
 
     # Runs after api-tests so the RESET_BEFORE_RUN wipe (test-api.yml) happens exactly once, before
-    # either suite touches the shared instance.
+    # either suite touches the shared instance. Still runs when api-tests is skipped (suite=ui).
     ui-tests:
         needs: api-tests
+        if: ${{ !cancelled() && inputs.suite != 'api' && needs.api-tests.result != 'failure' }}
         uses: ./.github/workflows/test-ui.yml
         with:
             environment: ${{ inputs.environment }}
@@ -54,8 +70,10 @@ jobs:
 
     publish-report:
         needs: [api-tests, ui-tests]
-        if: always()
+        # Scheduled runs have no inputs, so publish_report is null there and must default to publishing.
+        if: ${{ always() && (github.event_name == 'schedule' || inputs.publish_report) }}
         uses: ./.github/workflows/publish-allure-report.yml
         with:
-            report_dir: regression
+            # Single-suite runs get their own folder so they don't skew the full regression history.
+            report_dir: ${{ (inputs.suite == 'api' && 'regression-api') || (inputs.suite == 'ui' && 'regression-ui') || 'regression' }}
         secrets: inherit
