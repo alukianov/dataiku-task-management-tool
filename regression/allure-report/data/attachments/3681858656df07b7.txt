@@ -1,0 +1,5 @@
+expected the same token on repeated authenticate calls, got 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTc5MTE4OTIzNiwiaWF0IjoxNzkxMTg4NjM2fQ.eyJpZCI6MX0.SNbz9ggPBgpK6xaMfyHzogLORMCQFv7KRwgKxMAnU1c' then 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTc5MTE4OTIzNywiaWF0IjoxNzkxMTg4NjM3fQ.eyJpZCI6MX0.MFG3te9opWOPXkyuvAV12hcdzrzzaMCxdJM2BekxH34'
+assert 'eyJhbGciOiJI...7KRwgKxMAnU1c' == 'eyJhbGciOiJI...CxdJM2BekxH34'
+  
+  - eyJhbGciOiJIUzI1NiIsImV4cCI6MTc5MTE4OTIzNywiaWF0IjoxNzkxMTg4NjM3fQ.eyJpZCI6MX0.MFG3te9opWOPXkyuvAV12hcdzrzzaMCxdJM2BekxH34
+  + eyJhbGciOiJIUzI1NiIsImV4cCI6MTc5MTE4OTIzNiwiaWF0IjoxNzkxMTg4NjM2fQ.eyJpZCI6MX0.SNbz9ggPBgpK6xaMfyHzogLORMCQFv7KRwgKxMAnU1c
