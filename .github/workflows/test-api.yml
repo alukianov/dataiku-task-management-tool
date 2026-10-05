@@ -28,7 +28,6 @@ jobs:
     api-tests:
         runs-on: ubuntu-24.04
         env:
-            RESET_BEFORE_RUN: "true"
             ENVIRONMENT_ARG: ${{ inputs.environment }}
             WORKERS: ${{ inputs.workers }}
             MARKER_FILTER: ${{ inputs.marker }}

@@ -195,13 +195,15 @@ restrict local-file requests.
 
 - **`linter.yml`** — `black --check` + `pylint`, runs on every pull request to any branch.
 - **`test-api.yml`** / **`test-ui.yml`** — reusable (`workflow_call`) suites that only run tests and
-  upload Allure results. `test-api.yml` sets `RESET_BEFORE_RUN=true` to wipe the shared instance once
-  before the run. Inputs support a pytest marker expression (intersected with `api` or `ui`) and
+  upload Allure results. Neither resets the instance itself; that happens once in `regression.yml`.
+  Inputs support a pytest marker expression (intersected with `api` or `ui`) and
   comma-separated Allure feature names. UI runs remain fixed to Chrome/Full HD.
 - **`publish-allure-report.yml`** — reusable; merges uploaded `allure-results-*` artifacts, regenerates
   the Allure report (preserving history for trend graphs), and publishes it to the `gh-pages` branch.
 - **`regression.yml`** — the single entry point; runs nightly on a schedule and via manual
-  `workflow_dispatch`, chaining `test-api` → `test-ui` → `publish-allure-report`. A `suite` input
+  `workflow_dispatch`: a `reset` job wipes the instance once (`scripts/reset_instance.py`), then
+  `test-api` and `test-ui` run in parallel (independent of each other's result), then
+  `publish-allure-report`. A `suite` input
   (`all`/`api`/`ui`) runs one or both suites; `publish_report` can turn off publishing for ad-hoc runs.
 
 Published reports live on the `gh-pages` branch: full runs (`suite=all`, including the nightly run)
@@ -211,10 +213,8 @@ skew the full regression report's history.
 Secrets required in the repo: `QA_PASSWORD` (the `QA` test user's password; see
 [Environments and users](#environments-and-users)).
 
-> **Reset safety:** `regression.yml` runs `test-api.yml` nightly, and that workflow currently resets
-> its selected environment before tests. The default environment is documented as shared. Do not
-> schedule or dispatch these workflows against the shared instance; point CI at an isolated
-> environment or gate the reset before enabling automated runs.
+> **Reset safety:** every `regression.yml` run (including the nightly schedule) wipes its target
+> environment before the suites start. Only point it at an isolated or explicitly authorized instance.
 
 ## Contributing
 

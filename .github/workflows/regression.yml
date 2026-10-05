@@ -45,7 +45,27 @@ concurrency:
     cancel-in-progress: false
 
 jobs:
+    reset:
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: actions/setup-python@v7
+              with:
+                  python-version: "3.11"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Reset instance
+              env:
+                  ENVIRONMENT_ARG: ${{ inputs.environment }}
+              run: python -m scripts.reset_instance --environment "$ENVIRONMENT_ARG"
+
     api-tests:
+        needs: reset
         if: inputs.suite != 'ui'
         uses: ./.github/workflows/test-api.yml
         with:
@@ -55,11 +75,9 @@ jobs:
             allure_features: ${{ inputs.allure_features }}
         secrets: inherit
 
-    # Runs after api-tests so the RESET_BEFORE_RUN wipe (test-api.yml) happens exactly once, before
-    # either suite touches the shared instance. Still runs when api-tests is skipped (suite=ui).
     ui-tests:
-        needs: api-tests
-        if: ${{ !cancelled() && inputs.suite != 'api' && needs.api-tests.result != 'failure' }}
+        needs: reset
+        if: inputs.suite != 'api'
         uses: ./.github/workflows/test-ui.yml
         with:
             environment: ${{ inputs.environment }}
