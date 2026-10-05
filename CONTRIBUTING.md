@@ -43,9 +43,8 @@ docs(strategy): add risk-based prioritization
 - **New UI page or flow**: add/extend a Page Object under `src/ui/pages/`, then a test module under
   `tests/ui/`, tagged with `@pytest.mark.ui`.
 - Keep test data isolated — the default instance is shared; use unique data per test and never call
-  `/reset` from test code. The current API CI workflow opts into a reset before the suite, so it must
-  only target an isolated or explicitly authorized environment; see the reset warning in the
-  [README](README.md#ci-cd).
+  `/reset` from test code. The regression workflow resets once before both suites; see the reset
+  warning in the [README](README.md#ci-cd).
 
 ## Code style
 

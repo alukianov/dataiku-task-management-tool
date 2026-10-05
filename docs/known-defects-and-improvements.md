@@ -687,9 +687,10 @@ issue a fresh one per successful call?
 tokens whose decoded `iat` and `exp` claims each advanced by one second — consistent with minting a
 fresh token per request.
 
-**Impact**: `test_repeated_authenticate_returns_the_same_token` (marked `idempotency`) fails. Since the
-documented contract does not require token reuse, this alone does not establish an application bug; it
-exposes an undocumented contract assumption in the test.
+**Impact**: `test_repeated_authenticate_returns_the_same_token` (marked `idempotency`) fails whenever the
+two calls land in different seconds, so it is marked as a non-strict `xfail` until the contract is
+clarified. Since the documented contract does not require token reuse, this alone does not establish an
+application bug; it exposes an undocumented contract assumption in the test.
 
 **Suggested resolution**: Confirm the intended token issuance contract. If each call may mint a fresh
 token, change the test to assert both tokens are accepted and have the documented lifetime rather than

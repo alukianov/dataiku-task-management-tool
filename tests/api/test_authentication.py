@@ -196,6 +196,12 @@ def test_unknown_username_and_wrong_password_return_identical_error(api_client, 
 @pytest.mark.api
 @pytest.mark.auth
 @pytest.mark.idempotency
+@pytest.mark.xfail(
+    reason="TM-34 (docs/known-defects-and-improvements.md): repeated /authenticate calls mint a fresh token "
+    "per call and token reuse is unspecified. Remove xfail once the contract is clarified.",
+    # Non-strict: calls landing in the same second return identical tokens, so this can XPASS.
+    strict=False,
+)
 def test_repeated_authenticate_returns_the_same_token(api_client, settings):
     """Verifies that calling authenticate twice in a row with the same credentials returns the same token."""
     user = settings.user()

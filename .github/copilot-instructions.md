@@ -41,9 +41,8 @@ Specification (as given): `specification/task-management-app.md`
 - Adding a new environment or a new *pre-provisioned* user is a `config.ini` edit only — never add new
   env vars for base URLs/usernames.
 - The candidate instance is shared and persistent — test code must never call `/reset`; use the
-  `unique_name` fixture for collision-safe titles/tags/usernames instead. The current API CI workflow
-  opts into a reset before the suite and must only target an isolated or explicitly authorized
-  environment; see the [README reset warning](../README.md#ci-cd).
+  `unique_name` fixture for collision-safe titles/tags/usernames instead. Only the `reset` job in
+  `regression.yml` (via `scripts/reset_instance.py`) wipes the instance, once before both suites.
 - Allure annotations (`@allure.feature`, `@allure.story`, `@allure.step`) keep reports navigable as the
   suite grows.
 - **Never disable a pylint rule** (inline `# pylint: disable=...` or via `pyproject.toml`) — fix the
