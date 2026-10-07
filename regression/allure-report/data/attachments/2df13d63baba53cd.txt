@@ -1,4 +1,0 @@
-Content-Length: 21
-Content-Type: text/html; charset=utf-8
-Date: Tue, 06 Oct 2026 08:36:02 GMT
-Server: Caddy, Werkzeug/0.12.2 Python/2.7.18
