@@ -1,4 +1,0 @@
-Content-Length: 170
-Content-Type: application/json
-Date: Wed, 07 Oct 2026 08:11:16 GMT
-Server: Caddy, Werkzeug/0.12.2 Python/2.7.18

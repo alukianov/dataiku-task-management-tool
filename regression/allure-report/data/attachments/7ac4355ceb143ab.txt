@@ -1,0 +1,3 @@
+expected status 401, got 200 (body: )
+assert 200 == 401
+ +  where 200 = <Response [200]>.status_code

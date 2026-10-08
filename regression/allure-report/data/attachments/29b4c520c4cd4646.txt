@@ -1,0 +1,3 @@
+expected both wrong-password and unknown-username to return 401, got 200 and 200
+assert 200 == 401
+ +  where 200 = <Response [200]>.status_code
